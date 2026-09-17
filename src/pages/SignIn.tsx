@@ -1,8 +1,6 @@
+import Login from "../auth/signIn/Login";
+
 function SignIn() {
-  return (
-    <div>
-      <h1 className="bg-amber-600 text-white"> Sign In Page</h1>
-    </div>
-  );
+  return <Login />;
 }
 export default SignIn;
