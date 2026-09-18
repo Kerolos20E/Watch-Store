@@ -1,14 +1,66 @@
 import {
-  Fingerprint,
   KeyRound,
   Eye,
   ShieldCheck,
-  Lock,
   ArrowRight,
   Shield,
+  EyeOff,
+  Mail,
+  LoaderCircle,
 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+import {
+  LoginSchema,
+  type LoginFormData,
+} from "../schemaVaildation/LoginSchema";
+import { useState } from "react";
+import { FirebaseError } from "firebase/app";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  //
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(LoginSchema),
+    mode: "onBlur",
+  });
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/invalid-credential") {
+          setError("root", {
+            type: "server",
+            message: "Incorrect email or password",
+          });
+          return;
+        }
+        if (error.code === "auth/too-many-requests") {
+          setError("root", {
+            type: "server",
+            message: "Too many attempts. Try again later.",
+          });
+          return;
+        }
+      }
+      setError("root", {
+        type: "server",
+        message: "An error occurred, try again",
+      });
+      return;
+    }
+    navigate("/");
+  };
   return (
     <main
       className="w-full min-h-screen flex items-center justify-center p-4"
@@ -124,11 +176,15 @@ export default function Login() {
             </div>
 
             {/* Form */}
-            <form className="mt-8 space-y-5">
+            <form
+              className="mt-8 space-y-5"
+              noValidate
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="space-y-2">
                 <label
                   className="flex justify-between items-center"
-                  htmlFor="identifier"
+                  htmlFor="email"
                 >
                   <span
                     className="text-xs uppercase tracking-[0.16em]"
@@ -137,7 +193,7 @@ export default function Login() {
                       fontFamily: "var(--font-body)",
                     }}
                   >
-                    PATRON IDENTIFIER OR EMAIL
+                    EMAIL
                   </span>
                   <span
                     className="text-[10px]"
@@ -151,25 +207,26 @@ export default function Login() {
                 </label>
                 <div className="relative">
                   <input
-                    id="identifier"
-                    type="text"
-                    placeholder="vance.heir@patron.ch or VH-88204"
+                    id="email"
+                    type="email"
+                    placeholder="example@residence-vance.ch"
                     className="w-full px-4 py-3.5 pl-11 rounded-lg text-sm outline-none shadow-inner"
                     style={{
                       backgroundColor: "var(--color-input-bg)",
                       color: "var(--color-on-surface)",
                       fontFamily: "var(--font-body)",
                     }}
+                    {...register("email")}
                   />
-                  <Fingerprint
+                  <Mail
                     size={18}
                     className="absolute left-3.5 top-1/2 -translate-y-1/2"
-                    style={{
-                      color:
-                        "color-mix(in srgb, var(--color-primary) 70%, transparent)",
-                    }}
+                    style={{ color: "var(--color-primary)" }}
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-xs text-red-400">{errors.email.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -199,7 +256,7 @@ export default function Login() {
                 <div className="relative">
                   <input
                     id="passkey"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••••••••••"
                     className="w-full px-4 py-3.5 pl-11 pr-11 rounded-lg text-sm outline-none shadow-inner"
                     style={{
@@ -207,6 +264,7 @@ export default function Login() {
                       color: "var(--color-on-surface)",
                       fontFamily: "var(--font-body)",
                     }}
+                    {...register("password")}
                   />
                   <KeyRound
                     size={18}
@@ -218,61 +276,27 @@ export default function Login() {
                   />
                   <button
                     type="button"
-                    aria-label="Toggle passkey reveal"
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1"
-                    style={{ color: "var(--color-outline)" }}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                    onClick={() => setShowPassword((value) => !value)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                    style={{ color: "var(--color-on-surface-variant)" }}
                   >
-                    <Eye size={18} />
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-1 pb-2">
-                <label className="inline-flex items-center gap-3 cursor-pointer select-none">
-                  <div
-                    className="relative flex items-center justify-center w-4 h-4 rounded"
-                    style={{ backgroundColor: "var(--color-input-bg)" }}
-                  >
-                    <input
-                      type="checkbox"
-                      className="peer sr-only"
-                      id="rememberMe"
-                    />
-                    <div
-                      className="w-2.5 h-2.5 rounded-sm peer-checked:opacity-100 opacity-0 transition-opacity"
-                      style={{ backgroundColor: "var(--color-primary)" }}
-                    />
-                  </div>
-                  <span
-                    className="text-sm"
-                    style={{
-                      color: "var(--color-on-surface-variant)",
-                      fontFamily: "var(--font-body)",
-                    }}
-                  >
-                    Keep me authenticated for 30 days
-                  </span>
-                </label>
-                <div
-                  className="flex items-center gap-1.5 px-2 py-0.5 rounded"
-                  style={{ backgroundColor: "var(--color-toggle-bg)" }}
-                >
-                  <Lock size={13} style={{ color: "var(--color-primary)" }} />
-                  <span
-                    className="text-[10px] tracking-wider uppercase"
-                    style={{
-                      color: "var(--color-primary)",
-                      fontFamily: "var(--font-body)",
-                    }}
-                  >
-                    256-BIT
-                  </span>
-                </div>
+                {errors.password && (
+                  <p className="text-xs text-red-400">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-lg flex items-center justify-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase"
+                disabled={isSubmitting}
+                className="w-full py-3.5 rounded-lg flex cursor-pointer items-center justify-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase disabled:opacity-50"
                 style={{
                   backgroundColor: "var(--color-primary-container)",
                   color: "var(--color-vault-button-text)",
@@ -280,9 +304,25 @@ export default function Login() {
                   boxShadow: "0 4px 24px rgba(201,166,107,0.22)",
                 }}
               >
-                <span>Sign In</span>
-                <ArrowRight size={18} />
+                <span className="flex items-center gap-2">
+                  {isSubmitting ? (
+                    <>
+                      <LoaderCircle size={18} className="animate-spin" />
+                      <span>Login...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Login</span>
+                      <ArrowRight size={16} />
+                    </>
+                  )}
+                </span>
               </button>
+              {errors.root && (
+                <p className="text-xs text-red-400 text-center">
+                  {errors.root.message}
+                </p>
+              )}
             </form>
 
             {/* Divider */}
@@ -321,14 +361,14 @@ export default function Login() {
                   fontFamily: "var(--font-body)",
                 }}
               >
-                You not have a Account ?
-                <a
-                  href="#"
+                Don&apos;t have an account?
+                <Link
+                  to="/signup"
                   className="font-medium ml-1 underline underline-offset-4"
                   style={{ color: "var(--color-primary)" }}
                 >
-                  Resigster now
-                </a>
+                  Register now
+                </Link>
               </p>
               <div
                 className="flex items-center justify-center gap-2 mt-4 text-[10px] uppercase tracking-wider"

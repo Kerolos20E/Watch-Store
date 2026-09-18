@@ -1,28 +1,74 @@
 import { useState } from "react";
-import { IdCard, Mail, KeyRound, Eye, EyeOff, ArrowRight } from "lucide-react";
+import {
+  IdCard,
+  Mail,
+  KeyRound,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  LoaderCircle,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../../lib/firebase";
 import {
   SignUpSchema,
   type RegisterFormData,
 } from "../schemaVaildation/RegisterSchema";
+import { useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  // React hook form
   const {
     register,
     handleSubmit,
     trigger,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(SignUpSchema),
     mode: "onBlur",
   });
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log("Form data:", data);
+  // send user to firebase
+  const onSubmit = async (data: RegisterFormData) => {
+    let userCredential;
+    try {
+      userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/email-already-in-use") {
+          setError("email", {
+            type: "server",
+            message: "This email has been used before",
+          });
+          return;
+        }
+      }
+      if (!userCredential) {
+        setError("root", {
+          type: "server",
+          message: "An error occurred, try again",
+        });
+        return;
+      }
+    }
+    try {
+      await updateProfile(userCredential.user, { displayName: data.username });
+    } catch {
+      console.warn("Account created but failed to set display name.");
+    }
+    console.log("user created:", userCredential.user.uid);
+    navigate("/");
   };
 
   return (
@@ -181,9 +227,6 @@ export default function Signup() {
                     color: "var(--color-on-surface)",
                   }}
                   {...register("password", {
-                    // Re-validate confirmPassword live as the user edits
-                    // the original password, so a stale "does not match"
-                    // error doesn't linger after they've fixed it.
                     onChange: () => trigger("confirmPassword"),
                   })}
                 />
@@ -271,9 +314,23 @@ export default function Signup() {
                 color: "var(--color-on-primary)",
               }}
             >
-              <span>{isSubmitting ? "Registering..." : "Register now"}</span>
-              <ArrowRight size={16} />
+              <span className="flex items-center gap-2">
+                {isSubmitting ? (
+                  <>
+                    <LoaderCircle size={18} className="animate-spin" />
+                    <span>Creating account...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Register now</span>
+                    <ArrowRight size={16} />
+                  </>
+                )}
+              </span>
             </button>
+            {errors.root && (
+              <p className="text-xs text-red-400">{errors.root.message}</p>
+            )}
           </form>
         </div>
       </div>
