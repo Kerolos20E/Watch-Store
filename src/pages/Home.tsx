@@ -1,27 +1,26 @@
-// import Footer from "../layout/footer/Footer";
+import Hero from "../components/Hero";
+import SignatureLineages from "../components/SignatureLineages";
+import BrandStory from "../components/BrandStory";
+import AICuratorTeaser from "../components/AICuratorTeaser";
+import Newsletter from "../components/Newsletter";
 import Footer from "../layout/footer/Footer";
 import Navbar from "../layout/navbar/navBar";
 
-function Home() {
+export default function Home() {
   return (
-    <div
+    <main
+      className="w-full pt-20 min-h-screen"
       style={{ backgroundColor: "var(--color-surface-container-lowest)" }}
-      className="min-h-screen flex flex-col"
     >
-      <Navbar />
-      <main className="flex-1 flex items-center justify-center pt-20">
-        <p
-          className="text-sm"
-          style={{
-            color: "var(--color-outline)",
-            fontFamily: "var(--font-body)",
-          }}
-        >
-          Page content goes here
-        </p>
-      </main>
-      <Footer />
-    </div>
+      <div className="flex flex-col w-full">
+        <Navbar />
+        <Hero />
+        <SignatureLineages />
+        <BrandStory />
+        <AICuratorTeaser />
+        <Newsletter />
+        <Footer />
+      </div>
+    </main>
   );
 }
-export default Home;
