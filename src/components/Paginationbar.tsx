@@ -1,6 +1,18 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-export default function PaginationBar() {
+interface PaginationBarProps {
+  page: number;
+  totalPages: number;
+  pageSize: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
+}
+export default function PaginationBar({
+  page,
+  totalPages,
+  pageSize,
+  totalItems,
+  onPageChange,
+}: PaginationBarProps) {
   return (
     <div
       className="p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4"
@@ -13,37 +25,61 @@ export default function PaginationBar() {
           fontFamily: "var(--font-body)",
         }}
       >
-        Page 1 • 6 timepieces shown
+        Page {page} • {Math.min(pageSize, totalItems - (page - 1) * pageSize)}{" "}
+        timepieces shown
       </span>
       <div className="flex items-center gap-1.5">
-        <div
-          className="p-2 rounded"
-          style={{
-            backgroundColor: "var(--color-surface-container)",
-            color: "var(--color-outline)",
-            opacity: 0.4,
-          }}
-        >
-          <ChevronLeft size={18} />
-        </div>
-        <span
-          className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold"
-          style={{
-            backgroundColor: "var(--color-primary)",
-            color: "var(--color-on-primary)",
-          }}
-        >
-          1
-        </span>
-        <div
+        <button
+          type="button"
+          onClick={() => onPageChange(page - 1)}
+          disabled={page === totalPages}
           className="p-2 rounded"
           style={{
             backgroundColor: "var(--color-surface-container)",
             color: "var(--color-on-surface)",
+            opacity: page === 1 ? 0.4 : 1,
+          }}
+        >
+          <ChevronLeft size={18} />
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => {
+          const pageNumber = index + 1;
+
+          return (
+            <button
+              key={pageNumber}
+              type="button"
+              onClick={() => onPageChange(pageNumber)}
+              className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold"
+              style={
+                page === pageNumber
+                  ? {
+                      backgroundColor: "var(--color-primary)",
+                      color: "var(--color-on-primary)",
+                    }
+                  : {
+                      backgroundColor: "var(--color-surface-container)",
+                      color: "var(--color-on-surface)",
+                    }
+              }
+            >
+              {pageNumber}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => onPageChange(page + 1)}
+          disabled={page === 1}
+          className="p-2 rounded"
+          style={{
+            backgroundColor: "var(--color-surface-container)",
+            color: "var(--color-on-surface)",
+            opacity: page === 1 ? 0.4 : 1,
           }}
         >
           <ChevronRight size={18} />
-        </div>
+        </button>
       </div>
     </div>
   );

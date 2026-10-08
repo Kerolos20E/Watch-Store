@@ -14,6 +14,8 @@ export default function WatchesPage() {
   const [search, setSearch] = useState("");
   const [collection, setCollection] = useState("All Collection");
   const [sort, setSort] = useState("curated");
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
   //Feature End
   const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["watches"],
@@ -27,6 +29,25 @@ export default function WatchesPage() {
       collection === "All Collection" || watch.collectionName === collection;
     return matchSearch && matchesCollection;
   });
+  const sortedWatches = [...filteredWatches].sort((a, b) => {
+    switch (sort) {
+      case "price-desc":
+        return b.priceUSD - a.priceUSD;
+      case "price-asc":
+        return a.priceUSD - b.priceUSD;
+      case "name-asc":
+        return a.name.localeCompare(b.name);
+      default:
+        return 0;
+    }
+  });
+  const totalPage = Math.ceil(sortedWatches.length / pageSize);
+  const startIndex = (page - 1) * pageSize;
+  const paginatedWatches = sortedWatches.slice(
+    startIndex,
+    startIndex + pageSize
+  );
+
   if (isLoading) {
     return (
       <main
@@ -48,7 +69,13 @@ export default function WatchesPage() {
                 <WatchCardSkeleton key={index} />
               ))}
             </div>
-            <PaginationBar />
+            <PaginationBar
+              page={page}
+              totalPages={totalPage}
+              pageSize={pageSize}
+              totalItems={sortedWatches.length}
+              onPageChange={setPage}
+            />
           </div>
         </section>
       </main>
@@ -98,11 +125,17 @@ export default function WatchesPage() {
           />
           {isFetching && watches.length > 0 && <FetchingIndicator />}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 justify-items-center">
-            {filteredWatches.map((watch) => (
+            {paginatedWatches.map((watch) => (
               <WatchCard key={watch.id} {...watch} />
             ))}
           </div>
-          <PaginationBar />
+          <PaginationBar
+            page={page}
+            totalPages={totalPage}
+            pageSize={pageSize}
+            totalItems={sortedWatches.length}
+            onPageChange={setPage}
+          />
         </div>
       </section>
     </main>
