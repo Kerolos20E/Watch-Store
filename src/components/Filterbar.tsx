@@ -5,8 +5,12 @@ const COLLECTIONS = [
   "Signature Lineages",
   "Manufacture Reserve",
 ];
+interface FilterBarProps {
+  search: string;
+  onSearchChange: (value: string) => void;
+}
+export default function FilterBar({ search, onSearchChange }: FilterBarProps) {
 
-export default function FilterBar() {
   return (
     <div
       className="mb-6 p-4 rounded-lg flex flex-col gap-4"
@@ -23,6 +27,8 @@ export default function FilterBar() {
           <input
             type="text"
             placeholder="Search by name or reference..."
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded text-sm outline-none"
             style={{
               backgroundColor: "var(--color-surface-container)",

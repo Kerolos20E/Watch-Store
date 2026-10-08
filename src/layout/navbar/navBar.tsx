@@ -1,8 +1,10 @@
 import { ShoppingBag, Sparkles, Menu } from "lucide-react";
+import { NavLink } from "react-router-dom";
+
 // Types Start
-interface NavLink {
+interface NavItem {
   label: string;
-  current?: boolean;
+  path: string;
   badge?: string;
 }
 type NavbarProps = {
@@ -10,12 +12,12 @@ type NavbarProps = {
 };
 
 // Types End
-const NAV_LINKS: NavLink[] = [
-  { label: "Home", current: true },
-  { label: "Watches" },
-  { label: "Atelier Craft" },
-  { label: "AI Advisor", badge: "GENEVE AI" },
-  { label: "Contact" },
+const NAV_LINKS: NavItem[] = [
+  { label: "Home", path: "/" },
+  { label: "Watches", path: "/watches" },
+  { label: "Atelier Craft", path: "/atelier" },
+  { label: "AI Advisor", path: "/ai-advisor", badge: "GENEVE AI" },
+  { label: "Contact", path: "/contact" },
 ];
 
 export default function Navbar({ logoSrc }: NavbarProps) {
@@ -31,7 +33,7 @@ export default function Navbar({ logoSrc }: NavbarProps) {
     >
       <div className="h-20 w-full max-w-7xl mx-auto px-4 md:px-16 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-3.5 group">
+        <NavLink to="/" className="flex items-center gap-3.5 group">
           {logoSrc ? (
             <img
               src={logoSrc}
@@ -71,27 +73,26 @@ export default function Navbar({ logoSrc }: NavbarProps) {
               Genève • 1892
             </span>
           </div>
-        </a>
+        </NavLink>
 
         {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-4">
           {NAV_LINKS.map((link) => (
-            <a
+            <NavLink
               key={link.label}
-              href="#"
-              aria-current={link.current ? "page" : undefined}
-              className={`text-xs uppercase tracking-widest flex items-center gap-3 pb-1 ${
-                link.current ? "border-b font-medium" : "font-normal"
-              }`}
-              style={{
+              to={link.path}
+              className={({ isActive }) =>
+                `text-xs uppercase tracking-widest flex items-center gap-3 pb-1 ${
+                  isActive ? "border-b font-medium" : "font-normal"
+                }`
+              }
+              style={({ isActive }) => ({
                 fontFamily: "var(--font-body)",
-                color: link.current
+                color: isActive
                   ? "var(--color-primary)"
                   : "var(--color-on-surface-variant)",
-                borderColor: link.current
-                  ? "var(--color-primary)"
-                  : "transparent",
-              }}
+                borderColor: isActive ? "var(--color-primary)" : "transparent",
+              })}
             >
               <span>{link.label}</span>
               {link.badge && (
@@ -108,7 +109,7 @@ export default function Navbar({ logoSrc }: NavbarProps) {
                   {link.badge}
                 </span>
               )}
-            </a>
+            </NavLink>
           ))}
         </nav>
 
@@ -132,9 +133,11 @@ export default function Navbar({ logoSrc }: NavbarProps) {
             </span>
           </div>
 
-          <div
+          <NavLink
+            to="/cart"
             className="relative"
             style={{ color: "var(--color-on-surface-variant)" }}
+            aria-label="Shopping cart"
           >
             <ShoppingBag size={22} strokeWidth={1.75} />
             <span
@@ -146,7 +149,7 @@ export default function Navbar({ logoSrc }: NavbarProps) {
             >
               2
             </span>
-          </div>
+          </NavLink>
 
           <div
             className="hidden sm:block rounded-full border p-0.5"

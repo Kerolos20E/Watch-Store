@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import type { Watch } from "../types/watch";
 
 export default function WatchCard({
@@ -28,7 +29,6 @@ export default function WatchCard({
             {crystal}
           </span>
         </div>
-
         <div
           className="relative w-full aspect-square flex items-center justify-center rounded overflow-hidden mb-4"
           style={{ backgroundColor: "var(--color-surface-container-lowest)" }}
@@ -37,23 +37,72 @@ export default function WatchCard({
             <img
               src={imageUrl}
               alt={name}
-              className="w-4/5 h-4/5 object-contain drop-shadow-2xl"
+              className="bg-white w-5/5 h-5/5 object-contain drop-shadow-2xl"
             />
           )}
         </div>
 
-        <span>{caseMaterial}</span>
-
-        <h3>{name}</h3>
-
-        <p>
-          {caseMaterial} • {movement} • {dial}
+        <span
+          className="text-[10px] tracking-widest uppercase block mb-1"
+          style={{
+            color: "var(--color-outline)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          {dial}
+        </span>
+        <h3
+          className="text-xl"
+          style={{
+            fontFamily: "var(--font-headline)",
+            color: "var(--color-on-surface)",
+          }}
+        >
+          {name}
+        </h3>
+        <p
+          className="text-xs mt-1"
+          style={{
+            color: "var(--color-on-surface-variant)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          {caseMaterial} • {movement}
         </p>
       </div>
 
-      <div>
-        <span>PRICE</span>
-        <span>${priceUSD.toLocaleString()}</span>
+      <div className="pt-4 mt-4 flex items-center justify-between">
+        <div>
+          <span
+            className="text-[10px] tracking-wider block"
+            style={{
+              color: "var(--color-outline)",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            PRICE
+          </span>
+          <span
+            className="text-xl tracking-wide"
+            style={{
+              color: "var(--color-primary)",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            ${priceUSD.toLocaleString()}
+          </span>
+        </div>
+        <div
+          className="px-3.5 py-1.5 rounded text-[10px] uppercase tracking-wider flex items-center gap-1"
+          style={{
+            backgroundColor: "var(--color-primary)",
+            color: "var(--color-on-primary)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          Acquire
+          <ArrowRight size={14} />
+        </div>
       </div>
     </article>
   );

@@ -13,13 +13,11 @@ export default function Home() {
       style={{ backgroundColor: "var(--color-surface-container-lowest)" }}
     >
       <div className="flex flex-col w-full">
-        <Navbar />
         <Hero />
         <SignatureLineages />
         <BrandStory />
         <AICuratorTeaser />
         <Newsletter />
-        <Footer />
       </div>
     </main>
   );
