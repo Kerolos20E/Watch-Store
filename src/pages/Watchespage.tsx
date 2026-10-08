@@ -8,16 +8,24 @@ import ErrorState from "../components/ErrorState";
 import FetchingIndicator from "../components/FetchingIndicator";
 import EmptyState from "../components/EmptyState";
 import { useState } from "react";
+
 export default function WatchesPage() {
+  //Feature Start
   const [search, setSearch] = useState("");
+  const [collection, setCollection] = useState("All Collection");
+  const [sort, setSort] = useState("curated");
+  //Feature End
   const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["watches"],
     queryFn: getWatches,
   });
   const watches = data ?? [];
+  const searchTerm = search.trim().toLowerCase();
   const filteredWatches = watches.filter((watch) => {
-    const searchTerm = search.trim().toLowerCase();
-    return watch.name.toLowerCase().includes(searchTerm);
+    const matchSearch = watch.name.toLowerCase().includes(searchTerm);
+    const matchesCollection =
+      collection === "All Collection" || watch.collectionName === collection;
+    return matchSearch && matchesCollection;
   });
   if (isLoading) {
     return (
@@ -27,7 +35,14 @@ export default function WatchesPage() {
       >
         <section className="w-full py-12">
           <div className="w-full max-w-[1440px] mx-auto px-4 md:px-16">
-            <FilterBar search={search} onSearchChange={setSearch} />
+            <FilterBar
+              search={search}
+              onSearchChange={setSearch}
+              collection={collection}
+              onCollectionChange={setCollection}
+              sort={sort}
+              onSortChange={setSort}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, index) => (
                 <WatchCardSkeleton key={index} />
@@ -52,7 +67,14 @@ export default function WatchesPage() {
       >
         <section className="w-full py-12">
           <div className="w-full max-w-[1440px] mx-auto px-4 md:px-16">
-            <FilterBar search={search} onSearchChange={setSearch} />
+            <FilterBar
+              search={search}
+              onSearchChange={setSearch}
+              collection={collection}
+              onCollectionChange={setCollection}
+              sort={sort}
+              onSortChange={setSort}
+            />
             <EmptyState />
           </div>
         </section>
@@ -66,7 +88,14 @@ export default function WatchesPage() {
     >
       <section className="w-full py-12">
         <div className="w-full max-w-[1440px] mx-auto px-4 md:px-16">
-          <FilterBar search={search} onSearchChange={setSearch} />
+          <FilterBar
+            search={search}
+            onSearchChange={setSearch}
+            collection={collection}
+            onCollectionChange={setCollection}
+            sort={sort}
+            onSortChange={setSort}
+          />
           {isFetching && watches.length > 0 && <FetchingIndicator />}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 justify-items-center">
             {filteredWatches.map((watch) => (

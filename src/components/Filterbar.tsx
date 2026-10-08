@@ -1,16 +1,29 @@
 import { Search, ChevronDown } from "lucide-react";
-
 const COLLECTIONS = [
   "All Collection",
-  "Signature Lineages",
-  "Manufacture Reserve",
+  "ROLEX",
+  "CARTIER",
+  "OMEGA",
+  "PATEK PHILIPPE",
+  "GUCCI",
+  "VACHERON CONSTANTIN",
 ];
 interface FilterBarProps {
   search: string;
   onSearchChange: (value: string) => void;
+  collection: string;
+  onCollectionChange: (value: string) => void;
+  sort: string;
+  onSortChange: (value: string) => void;
 }
-export default function FilterBar({ search, onSearchChange }: FilterBarProps) {
-
+export default function FilterBar({
+  search,
+  onSearchChange,
+  collection,
+  onCollectionChange,
+  sort,
+  onSortChange,
+}: FilterBarProps) {
   return (
     <div
       className="mb-6 p-4 rounded-lg flex flex-col gap-4"
@@ -51,6 +64,8 @@ export default function FilterBar({ search, onSearchChange }: FilterBarProps) {
           </label>
           <div className="relative">
             <select
+              value={sort}
+              onChange={(e) => onSortChange(e.target.value)}
               className="appearance-none pl-3 pr-8 py-2 rounded text-sm outline-none cursor-pointer"
               style={{
                 backgroundColor: "var(--color-surface-container)",
@@ -58,10 +73,10 @@ export default function FilterBar({ search, onSearchChange }: FilterBarProps) {
                 fontFamily: "var(--font-body)",
               }}
             >
-              <option>Curated Selection</option>
-              <option>Price: High to Low</option>
-              <option>Price: Low to High</option>
-              <option>Name: A to Z</option>
+              <option value="curated">Curated Selection</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="name-asc">Name: A to Z</option>
             </select>
             <ChevronDown
               size={16}
@@ -75,11 +90,12 @@ export default function FilterBar({ search, onSearchChange }: FilterBarProps) {
       {/* Collection filter buttons */}
       <div className="flex flex-wrap items-center gap-2">
         {COLLECTIONS.map((name, index) => (
-          <span
+          <button
             key={name}
+            onClick={() => onCollectionChange(name)}
             className="px-3.5 py-1.5 rounded text-[10px] uppercase tracking-wider"
             style={
-              index === 0
+              collection === name
                 ? {
                     backgroundColor: "var(--color-primary)",
                     color: "var(--color-on-primary)",
@@ -91,7 +107,7 @@ export default function FilterBar({ search, onSearchChange }: FilterBarProps) {
             }
           >
             {name}
-          </span>
+          </button>
         ))}
       </div>
     </div>

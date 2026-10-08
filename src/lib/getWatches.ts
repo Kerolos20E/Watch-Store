@@ -9,6 +9,7 @@ export async function getWatches(): Promise<Watch[]> {
 
     return {
       id: doc.id,
+      collectionName: data.collectionName ?? "",
       crystal: data.Crystal ?? "",
       dial: data.Dial ?? "",
       name: data.name ?? "",

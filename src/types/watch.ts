@@ -1,4 +1,5 @@
 export interface Watch {
+  collectionName: string;
   id: string;
   crystal: string;
   dial?: string;
