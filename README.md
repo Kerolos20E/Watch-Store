@@ -8,7 +8,7 @@ Browse a curated catalog of high-end timepieces, view detailed specs for each wa
 
 | Homepage | Watch Details |
 |---|---|
-| ![Homepage](./screenshots/home.png) | ![Watch Details](./screenshots/watch-details.png) |
+| ![Homepage](./screenshots/home.png) | ![Watches Page](./screenshots/watches.png) |
 
 > Drop your own screenshots into a `screenshots/` folder at the project root and update the filenames above to match.
 
