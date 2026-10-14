@@ -89,7 +89,7 @@ export default function FilterBar({
 
       {/* Collection filter buttons */}
       <div className="flex flex-wrap items-center gap-2">
-        {COLLECTIONS.map((name, index) => (
+        {COLLECTIONS.map((name) => (
           <button
             key={name}
             onClick={() => onCollectionChange(name)}
