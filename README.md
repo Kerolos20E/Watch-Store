@@ -18,7 +18,6 @@ Browse a curated catalog of high-end timepieces, view detailed specs for each wa
 - **Profile page** — view account info, edit display name, view cart, sign out
 - **Responsive navigation** — sticky navbar with a mobile menu
 - **Scroll-triggered animations** — GSAP + ScrollTrigger entrance animations on the homepage
-- **AI Advisor teaser** — a preview section for an upcoming AI-powered concierge feature
 
 ## Tech Stack
 
