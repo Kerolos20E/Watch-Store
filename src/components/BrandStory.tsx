@@ -23,7 +23,7 @@ const CRAFT_POINTS = [
 
 export default function BrandStory() {
   return (
-    <section className="w-full py-12" style={{ backgroundColor: "var(--color-surface-container-low)" }}>
+    <section id="BRANDSTORY" className="w-full py-12" style={{ backgroundColor: "var(--color-surface-container-low)" }}>
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 space-y-8">

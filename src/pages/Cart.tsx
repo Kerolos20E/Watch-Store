@@ -1,241 +1,324 @@
-import { Minus, Plus, Edit3, Archive, Trash2 } from "lucide-react";
+import { ShieldCheck, Lock, Banknote, Minus, Plus, X } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "../store/hook";
+import { removeFromCart, updateQuantity, clearCart } from "../store/cartSlice";
+import { Link } from "react-router-dom";
 
-interface CartItemProps {
-  tag: string;
-  name: string;
-  refAndCalibre: string;
-  imageUrl: string;
-  specs: { label: string; value: string }[];
-  quantity: number;
-  quantityLabel?: string; // "Allocation" or "Quantity"
-  quantityLocked?: boolean; // unique pieces can't be incremented
-  noteLabel?: string; // e.g. "Specify Caseback Inscription"
-}
+export default function CartSummary() {
+  const cartItems = useAppSelector((state) => state.cart.items);
+  const dispatch = useAppDispatch();
+  const totalItems = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
-export default function Cart({
-  tag,
-  name,
-  refAndCalibre,
-  imageUrl,
-  specs,
-  quantity,
-  quantityLabel = "Quantity",
-  quantityLocked = false,
-  noteLabel = "Add a Note",
-}: CartItemProps) {
   return (
-    <article
-      className="rounded-lg p-6 md:p-8 shadow-xl relative overflow-hidden transition-colors duration-300"
+    <aside
+      className="p-12 md:p-8 shadow-xl"
       style={{ backgroundColor: "var(--color-surface-container-low)" }}
     >
-      <div
-        className="absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl pointer-events-none"
-        style={{
-          backgroundColor:
-            "color-mix(in srgb, var(--color-primary) 5%, transparent)",
-        }}
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center relative z-10">
-        {/* Thumbnail */}
-        <div
-          className="md:col-span-4 relative flex items-center justify-center p-4 rounded-md aspect-square"
-          style={{ backgroundColor: "var(--color-surface-container-lowest)" }}
-        >
-          <img
-            src={imageUrl}
-            alt={name}
-            className="w-full h-full object-contain"
-            style={{ filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.8))" }}
-          />
-          <span
-            className="absolute top-3 left-3 text-[10px] uppercase px-2 py-0.5 rounded tracking-wider backdrop-blur-sm"
+      {/* Price breakdown */}
+      <div className="space-y-4 pt-18">
+        <div className="flex mb-6 flex-1 justify-between items-center">
+          <h3
+            className="text-xl"
             style={{
-              backgroundColor:
-                "color-mix(in srgb, var(--color-surface-container-lowest) 70%, transparent)",
-              color: "var(--color-on-surface)",
-              fontFamily: "var(--font-body)",
+              fontFamily: "var(--font-headline)",
+              color: "var(--color-heading)",
             }}
           >
-            {tag}
-          </span>
+            Cart Summary
+          </h3>
+          <button
+            className="text-xl underline flex items-center gap-1.5"
+            type="button"
+            style={{
+              fontFamily: "var(--font-headline)",
+              color: "var(--color-heading)",
+            }}
+            onClick={() => dispatch(clearCart())}
+            disabled={cartItems.length === 0}
+          >
+            Clear Cart
+          </button>
         </div>
+        {cartItems.length === 0 ? (
+          <div className="text-sm text-center py-6">
+            <p
+              className="text-sm text-center py-6"
+              style={{
+                color: "var(--color-outline)",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              Empty
+            </p>
+            <Link
+              to="/watches"
+              className="underline"
+              style={{
+                color: "var(--color-outline)",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              Go to All Watches
+            </Link>
+          </div>
+        ) : (
+          cartItems.map((item) => (
+            <div key={item.id} className="flex items-center gap-3">
+              <div
+                className="w-40 h-40 rounded flex items-center justify-center shrink-0 overflow-hidden"
+                style={{
+                  backgroundColor: "var(--color-surface-container-lowest)",
+                }}
+              >
+                <img
+                  src={item.imageUrl}
+                  alt={item.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
 
-        {/* Details */}
-        <div className="md:col-span-8 flex flex-col justify-between h-full space-y-4">
-          <div>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <span
-                  className="text-[10px] uppercase tracking-[0.2em]"
+              <div className="flex-1 min-w-0">
+                <p
+                  className="text-sm"
                   style={{
-                    color: "var(--color-primary)",
-                    fontFamily: "var(--font-body)",
-                  }}
-                >
-                  {quantityLabel === "Allocation"
-                    ? "Haute Complication"
-                    : "Signature Piece"}
-                </span>
-                <h2
-                  className="text-2xl mt-1"
-                  style={{
-                    fontFamily: "var(--font-headline)",
                     color: "var(--color-on-surface)",
-                  }}
-                >
-                  {name}
-                </h2>
-                <p
-                  className="text-xs mt-0.5"
-                  style={{
-                    color: "var(--color-outline)",
                     fontFamily: "var(--font-body)",
                   }}
                 >
-                  {refAndCalibre}
+                  {item.name}
                 </p>
-              </div>
-              <div className="text-right shrink-0">
-                <span
-                  className="text-2xl font-medium tracking-tight"
-                  style={{
-                    color: "var(--color-primary)",
-                    fontFamily: "var(--font-headline)",
-                  }}
-                ></span>
-                <p
-                  className="text-[10px] uppercase tracking-wider"
-                  style={{
-                    color: "var(--color-outline)",
-                    fontFamily: "var(--font-body)",
-                  }}
-                >
-                  USD Net
-                </p>
-              </div>
-            </div>
-
-            {/* Spec chips */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4 pt-3 text-sm">
-              {specs.map((spec) => (
-                <div
-                  key={spec.label}
-                  className="p-2 rounded"
-                  style={{
-                    backgroundColor:
-                      "color-mix(in srgb, var(--color-surface-container-lowest) 60%, transparent)",
-                  }}
-                >
-                  <span
-                    className="block text-[10px] uppercase"
+                <div className="flex items-center gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      dispatch(
+                        updateQuantity({
+                          id: item.id,
+                          quantity: item.quantity - 1,
+                        })
+                      )
+                    }
+                    className="w-5 h-5 flex items-center justify-center rounded cursor-pointer"
                     style={{
-                      color: "var(--color-outline)",
-                      fontFamily: "var(--font-body)",
+                      backgroundColor: "var(--color-surface-container-lowest)",
                     }}
+                    aria-label="Decrease quantity"
                   >
-                    {spec.label}
-                  </span>
+                    <Minus
+                      size={11}
+                      style={{ color: "var(--color-outline)" }}
+                    />
+                  </button>
                   <span
+                    className="text-xs w-4 text-center"
                     style={{
                       color: "var(--color-on-surface-variant)",
                       fontFamily: "var(--font-body)",
                     }}
                   >
-                    {spec.value}
+                    {item.quantity}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      dispatch(
+                        updateQuantity({
+                          id: item.id,
+                          quantity: item.quantity + 1,
+                        })
+                      )
+                    }
+                    className="w-5 h-5 flex items-center justify-center rounded cursor-pointer"
+                    style={{
+                      backgroundColor: "var(--color-surface-container-lowest)",
+                    }}
+                    aria-label="Increase quantity"
+                  >
+                    <Plus size={11} style={{ color: "var(--color-outline)" }} />
+                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Quantity + actions */}
-          <div className="pt-4 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span
-                className="text-[10px] uppercase tracking-wider"
-                style={{
-                  color: "var(--color-outline)",
-                  fontFamily: "var(--font-body)",
-                }}
-              >
-                {quantityLabel}
-              </span>
-              <div
-                className="flex items-center rounded px-2 py-1 gap-3"
-                style={{
-                  backgroundColor: "var(--color-surface-container-lowest)",
-                }}
-              >
-                <Minus
-                  size={16}
-                  style={{
-                    color: "var(--color-outline)",
-                    opacity: quantityLocked ? 0.3 : 1,
-                  }}
-                />
-                <span
-                  className="px-1 text-sm font-medium"
-                  style={{
-                    color: "var(--color-on-surface)",
-                    fontFamily: "var(--font-body)",
-                  }}
-                >
-                  {quantity}
-                </span>
-                <Plus
-                  size={16}
-                  style={{
-                    color: "var(--color-outline)",
-                    opacity: quantityLocked ? 0.3 : 1,
-                  }}
-                />
               </div>
-              {quantityLocked && (
+
+              <div className="text-right shrink-0">
                 <span
-                  className="text-[11px] italic"
+                  className="text-xl block"
                   style={{
-                    color: "var(--color-secondary)",
-                    fontFamily: "var(--font-body)",
+                    color: "var(--color-primary)",
+                    fontFamily: "var(--font-headline)",
                   }}
                 >
-                  Unique piece
+                  ${(item.price * item.quantity).toLocaleString()}
                 </span>
-              )}
+                <button
+                  type="button"
+                  onClick={() => dispatch(removeFromCart(item.id))}
+                  className="mt-1 cursor-pointer"
+                  aria-label="Remove item"
+                >
+                  <X size={16} style={{ color: "var(--color-outline)" }} />
+                </button>
+              </div>
             </div>
+          ))
+        )}
 
-            <div
-              className="flex items-center gap-4 text-[10px] uppercase tracking-wider"
-              style={{
-                color: "var(--color-on-surface-variant)",
-                fontFamily: "var(--font-body)",
-              }}
-            >
-              <span className="flex items-center gap-1">
-                <Edit3 size={13} />
-                {noteLabel}
-              </span>
-              <span style={{ color: "var(--color-outline)", opacity: 0.4 }}>
-                •
-              </span>
-              <span className="flex items-center gap-1">
-                <Archive size={13} />
-                Save for Later
-              </span>
-              <span style={{ color: "var(--color-outline)", opacity: 0.4 }}>
-                •
-              </span>
-              <span
-                className="flex items-center gap-1"
-                style={{ color: "var(--color-outline)" }}
-              >
-                <Trash2 size={13} />
-                Remove
-              </span>
-            </div>
-          </div>
+        {cartItems.length > 0 && (
+          <button
+            type="button"
+            onClick={() => dispatch(clearCart())}
+            className="text-[10px] uppercase tracking-wider cursor-pointer"
+            style={{
+              color: "var(--color-outline)",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            Clear all
+          </button>
+        )}
+      </div>
+
+      {/* Divider */}
+      <div
+        className="h-px my-6"
+        style={{ backgroundColor: "var(--color-outline)", opacity: 0.2 }}
+      />
+
+      {/* Privilege / Patron code */}
+      <div className="mb-6">
+        <label
+          className="block text-[10px] uppercase tracking-wider mb-2"
+          style={{
+            color: "var(--color-outline)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          Privilege / Patron Token
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Enter code"
+            className="flex-1 rounded px-3 py-2 text-sm outline-none"
+            style={{
+              backgroundColor: "var(--color-input-bg)",
+              color: "var(--color-on-surface)",
+              fontFamily: "var(--font-body)",
+              border: "1px solid var(--color-outline)",
+            }}
+          />
+          <span
+            className="px-4 py-2 rounded text-xs uppercase tracking-wider flex items-center justify-center"
+            style={{
+              backgroundColor: "var(--color-button-secondary-bg)",
+              color: "var(--color-on-surface)",
+              fontFamily: "var(--font-body)",
+              border: "1px solid var(--color-outline)",
+            }}
+          >
+            Apply
+          </span>
         </div>
       </div>
-    </article>
+
+      {/* Divider */}
+      <div
+        className="h-px my-6"
+        style={{ backgroundColor: "var(--color-outline)", opacity: 0.2 }}
+      />
+
+      {/* Total */}
+      <div className="flex items-end justify-between mb-8">
+        <span
+          className="text-sm uppercase tracking-wider"
+          style={{
+            color: "var(--color-on-surface-variant)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          {totalItems} {totalItems === 1 ? "Item" : "Items"}
+        </span>
+        <span
+          className="text-3xl"
+          style={{
+            fontFamily: "var(--font-headline)",
+            color: "var(--color-primary)",
+          }}
+        >
+          ${subtotal.toLocaleString()}
+        </span>
+      </div>
+
+      {/* Actions */}
+      <div className="space-y-3">
+        <span
+          className="block text-center rounded px-4 py-3 text-sm uppercase tracking-wider cursor-pointer"
+          style={{
+            backgroundColor: "var(--color-primary)",
+            color: "var(--color-vault-button-text)",
+            fontFamily: "var(--font-body)",
+            fontWeight: 600,
+          }}
+        >
+          Proceed to Private Checkout
+        </span>
+        <span
+          className="block text-center rounded px-4 py-3 text-sm uppercase tracking-wider cursor-pointer"
+          style={{
+            backgroundColor: "var(--color-button-secondary-bg)",
+            color: "var(--color-on-surface)",
+            fontFamily: "var(--font-body)",
+            border: "1px solid var(--color-outline)",
+          }}
+        >
+          Arrange Wire / Escrow Consultation
+        </span>
+      </div>
+
+      {/* Guarantees / security strip */}
+      <div
+        className="mt-8 pt-6 space-y-3"
+        style={{
+          borderTop:
+            "1px solid color-mix(in srgb, var(--color-outline) 20%, transparent)",
+        }}
+      >
+        <div
+          className="flex items-center gap-2 text-xs"
+          style={{
+            color: "var(--color-on-surface-variant)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          <ShieldCheck size={16} style={{ color: "var(--color-primary)" }} />
+          Fully Insured Armored Transit
+        </div>
+        <div
+          className="flex items-center gap-2 text-xs"
+          style={{
+            color: "var(--color-on-surface-variant)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          <Lock size={16} style={{ color: "var(--color-primary)" }} />
+          Encrypted Settlement Channel
+        </div>
+        <div
+          className="flex items-center gap-2 text-xs"
+          style={{
+            color: "var(--color-on-surface-variant)",
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          <Banknote size={16} style={{ color: "var(--color-primary)" }} />
+          Wire, Card & Escrow Accepted
+        </div>
+      </div>
+    </aside>
   );
 }

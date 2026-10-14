@@ -10,8 +10,12 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { auth } from "../../lib/firebase";
+
 import {
   LoginSchema,
   type LoginFormData,
@@ -19,14 +23,18 @@ import {
 import { useState } from "react";
 import { FirebaseError } from "firebase/app";
 import { Link, useNavigate } from "react-router-dom";
-
 export default function Login() {
   const navigate = useNavigate();
+  const [isSendingReset, setIsSendingReset] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
+  const [resetSuccess, setResetSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
     setError,
+    getValues,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(LoginSchema),
@@ -59,6 +67,40 @@ export default function Login() {
       return;
     }
     navigate("/");
+  };
+  const handleForgotPassword = async () => {
+    const isEmailValid = await trigger("email");
+
+    if (!isEmailValid) return;
+
+    const email = getValues("email").trim();
+
+    setIsSendingReset(true);
+    setResetMessage("");
+    setResetSuccess(false);
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+
+      setResetSuccess(true);
+      setResetMessage(
+        "If an account exists for this email, a password reset link will be sent."
+      );
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/too-many-requests") {
+          setResetMessage("Too many attempts. Please try again later.");
+        } else if (error.code === "auth/network-request-failed") {
+          setResetMessage("Network error. Check your internet connection.");
+        } else {
+          setResetMessage("Unable to send the reset email. Please try again.");
+        }
+      } else {
+        setResetMessage("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsSendingReset(false);
+    }
   };
   return (
     <main
@@ -240,17 +282,21 @@ export default function Login() {
                   >
                     ENCRYPTED PASSKEY
                   </label>
-                  <a
-                    href="#"
-                    className="text-xs italic underline underline-offset-4"
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={isSendingReset}
+                    className="text-xs italic underline underline-offset-4
+                     disabled:opacity-50"
                     style={{
-                      color:
-                        "color-mix(in srgb, var(--color-primary) 90%, transparent)",
+                      color: "var(--color-primary)",
                       fontFamily: "var(--font-body)",
                     }}
                   >
-                    Forgot your passkey?
-                  </a>
+                    {isSendingReset
+                      ? "Sending reset link..."
+                      : "Forgot your passkey?"}
+                  </button>
                 </div>
                 <div className="relative">
                   <input
@@ -291,7 +337,17 @@ export default function Login() {
                   </p>
                 )}
               </div>
-
+              {resetMessage && (
+                <p
+                  role="status"
+                  aria-live="polite"
+                  className={`text-xs text-center ${
+                    resetSuccess ? "text-emerald-400" : "text-red-400"
+                  }`}
+                >
+                  {resetMessage}
+                </p>
+              )}
               <button
                 type="submit"
                 disabled={isSubmitting}

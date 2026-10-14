@@ -3,12 +3,11 @@ import FilterBar from "../components/Filterbar";
 import PaginationBar from "../components/Paginationbar";
 import { useQuery } from "@tanstack/react-query";
 import { getWatches } from "../lib/getWatches";
-import WatchCardSkeleton from "../components/WatchCardSkeleton";
+import WatchCardSkeleton from "../components/Skeleton/WatchCardSkeleton";
 import ErrorState from "../components/ErrorState";
 import FetchingIndicator from "../components/FetchingIndicator";
 import EmptyState from "../components/EmptyState";
 import { useState } from "react";
-
 export default function WatchesPage() {
   //Feature Start
   const [search, setSearch] = useState("");
@@ -124,11 +123,32 @@ export default function WatchesPage() {
             onSortChange={setSort}
           />
           {isFetching && watches.length > 0 && <FetchingIndicator />}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 justify-items-center">
-            {paginatedWatches.map((watch) => (
-              <WatchCard key={watch.id} {...watch} />
-            ))}
-          </div>
+          {paginatedWatches.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 justify-items-center">
+              {paginatedWatches.map((watch) => (
+                <WatchCard key={watch.id} {...watch} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-16 text-center">
+              <h3 className="text-xl font-semibold">No timepieces found</h3>
+              <p className="mt-2 text-sm text-gray-400">
+                Try another search or collection.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setCollection("All Collection");
+                  setSort("curated");
+                  setPage(1);
+                }}
+                className="mt-6 rounded border px-5 py-2"
+              >
+                Reset Filters
+              </button>
+            </div>
+          )}
           <PaginationBar
             page={page}
             totalPages={totalPage}

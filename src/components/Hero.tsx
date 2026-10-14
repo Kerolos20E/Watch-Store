@@ -31,15 +31,27 @@ export default function Hero() {
       className="relative w-full -mt-20 overflow-hidden"
       style={{ backgroundColor: "var(--color-surface-container-lowest)" }}
     >
+      {/* Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover z-0 hidden md:flex"
+      >
+        <source src="/videos/hero-watch.mp4" type="video/mp4" />
+      </video>
+
+      {/* Overlay layer */}
       <div
-        className="absolute inset-0 pointer-events-none z-0"
+        className="absolute inset-0 pointer-events-none z-[1]"
         style={{
           background:
             "radial-gradient(ellipse 70% 60% at 50% 40%, color-mix(in srgb, var(--color-primary) 12%, transparent), rgba(13,13,13,0.95) 75%)",
         }}
       />
       <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full blur-[140px] pointer-events-none"
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full blur-[140px] pointer-events-none z-[1]"
         style={{
           backgroundColor:
             "color-mix(in srgb, var(--color-primary) 5%, transparent)",

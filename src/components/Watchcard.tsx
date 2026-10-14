@@ -1,5 +1,8 @@
-import { ArrowRight } from "lucide-react";
-import type { Watch } from "../types/watch";
+import { ArrowRight, ShoppingBag } from "lucide-react";
+import type { WatchCard } from "../types/watch";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../store/hook";
+import { addToCart } from "../store/cartSlice";
 
 export default function WatchCard({
   id,
@@ -10,7 +13,9 @@ export default function WatchCard({
   movement,
   priceUSD,
   imageUrl,
-}: Watch) {
+}: WatchCard) {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   return (
     <article
       id={id}
@@ -71,8 +76,8 @@ export default function WatchCard({
         </p>
       </div>
 
-      <div className="pt-4 mt-4 flex items-center justify-between">
-        <div>
+      <div className="pt-4 mt-4">
+        <div className="mb-3">
           <span
             className="text-[10px] tracking-wider block"
             style={{
@@ -92,16 +97,42 @@ export default function WatchCard({
             ${priceUSD.toLocaleString()}
           </span>
         </div>
-        <div
-          className="px-3.5 py-1.5 rounded text-[10px] uppercase tracking-wider flex items-center gap-1"
-          style={{
-            backgroundColor: "var(--color-primary)",
-            color: "var(--color-on-primary)",
-            fontFamily: "var(--font-body)",
-          }}
-        >
-          Acquire
-          <ArrowRight size={14} />
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => navigate(`/watches/${id}`)}
+            className="px-3 py-2 rounded text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 border"
+            style={{
+              borderColor: "var(--color-outline)",
+              color: "var(--color-on-surface)",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            Details
+            <ArrowRight size={13} />
+          </button>
+          <button
+            onClick={() =>
+              dispatch(
+                addToCart({
+                  id: id,
+                  name: name,
+                  price: priceUSD,
+                  imageUrl: imageUrl,
+                  quantity: 1,
+                }),
+              )
+            }
+            className="px-3 py-2 rounded text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5"
+            style={{
+              backgroundColor: "var(--color-primary)",
+              color: "var(--color-on-primary)",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            Add To Cart
+            <ShoppingBag size={13} />
+          </button>
         </div>
       </div>
     </article>

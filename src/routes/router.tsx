@@ -7,6 +7,7 @@ import SignUp from "../pages/SignUp";
 import Cart from "../pages/Cart";
 import WatchesPage from "../pages/Watchespage";
 import WatchDetails from "../pages/WatchDetails";
+import Profile from "../pages/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
         element: <WatchesPage />,
       },
       {
-        path: "/watchesdetails",
+        path: "/watches/:id",
         element: <WatchDetails />,
       },
       {
@@ -32,8 +33,8 @@ const router = createBrowserRouter([
             element: <Cart />,
           },
           {
-            // path: "/profile",
-            // element: <Profiler />,
+            path: "/profile",
+            element: <Profile />,
           },
         ],
       },

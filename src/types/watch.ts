@@ -1,4 +1,4 @@
-export interface Watch {
+export interface WatchCard {
   collectionName: string;
   id: string;
   crystal: string;
@@ -7,5 +7,5 @@ export interface Watch {
   caseMaterial: string;
   movement: string;
   priceUSD: number;
-  imageUrl?: string;
+  imageUrl: string;
 }

@@ -19,6 +19,7 @@ const CLIENT_CARE: string[] = [
 export default function Footer({ logoSrc }: FooterProps) {
   return (
     <footer
+      id="footer"
       className="w-full border-t pt-12 pb-6"
       style={{
         backgroundColor: "var(--color-bg)",
