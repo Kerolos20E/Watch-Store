@@ -4,6 +4,14 @@ A modern luxury watch e-commerce application built with **React**, **TypeScript*
 
 Browse a curated catalog of high-end timepieces, view detailed specs for each watch, manage a shopping cart, and sign in with a full Firebase authentication flow — all wrapped in a dark, editorial "Swiss watchmaker" aesthetic.
 
+## Screenshots
+
+| Homepage | Watch Details |
+|---|---|
+| ![Homepage](./screenshots/home.png) | ![Watch Details](./screenshots/watch-details.png) |
+
+> Drop your own screenshots into a `screenshots/` folder at the project root and update the filenames above to match.
+
 ## Live Demo
 
 **[watch-store-405de.web.app](https://watch-store-405de.web.app)** — deployed on Firebase Hosting.
@@ -18,6 +26,7 @@ Browse a curated catalog of high-end timepieces, view detailed specs for each wa
 - **Profile page** — view account info, edit display name, view cart, sign out
 - **Responsive navigation** — sticky navbar with a mobile menu
 - **Scroll-triggered animations** — GSAP + ScrollTrigger entrance animations on the homepage
+- **AI Advisor teaser** — a preview section for an upcoming AI-powered concierge feature
 
 ## Tech Stack
 
