@@ -1,75 +1,111 @@
-# React + TypeScript + Vite
+# Vance & Heir — The Watch Store
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern luxury watch e-commerce application built with **React**, **TypeScript**, **Firebase**, **TanStack Query**, and **Tailwind CSS**.
 
-Currently, two official plugins are available:
+Browse a curated catalog of high-end timepieces, view detailed specs for each watch, manage a shopping cart, and sign in with a full Firebase authentication flow — all wrapped in a dark, editorial "Swiss watchmaker" aesthetic.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Live Demo
 
-## React Compiler
+**[watch-store-405de.web.app](https://watch-store-405de.web.app)** — deployed on Firebase Hosting.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- **Curated collections** — a "Signature Lineages" showcase on the homepage, pulling live data from Firestore
+- **Watch catalog** — browsable grid with filtering and pagination
+- **Watch details page** — full specs (movement, case material, crystal, dial, price) per piece
+- **Authentication** — email/password sign-up & login, Google sign-in, protected/public-only routes, powered by Firebase Auth
+- **Shopping cart** — add/remove/update quantities, persisted to `localStorage`, managed with Redux Toolkit
+- **Profile page** — view account info, edit display name, view cart, sign out
+- **Responsive navigation** — sticky navbar with a mobile menu
+- **Scroll-triggered animations** — GSAP + ScrollTrigger entrance animations on the homepage
+- **AI Advisor teaser** — a preview section for an upcoming AI-powered concierge feature
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Layer            | Tech                                           |
+| ----------------- | ----------------------------------------------- |
+| Framework         | React + TypeScript (Vite)                      |
+| Styling           | Tailwind CSS                                   |
+| Icons             | lucide-react                                   |
+| Routing           | React Router                                   |
+| Server state      | TanStack Query (React Query)                   |
+| Client state      | Redux Toolkit                                  |
+| Backend / Auth    | Firebase (Auth, Firestore, Storage)            |
+| Forms/validation  | React Hook Form + Zod                          |
+| Animation         | GSAP + ScrollTrigger                           |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
 
+- Node.js 18+
+- A Firebase project (Auth, Firestore, and Storage enabled)
+
+### Installation
+
+```bash
+git clone https://github.com/Kerolos20E/Watch-Store.git
+cd Watch-Store
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+### Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env` file in the project root with your Firebase config:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+> Grab these values from your Firebase project settings → General → Your apps → SDK setup and configuration.
+
+### Run locally
+
+```bash
+npm run dev
+```
+
+The app will be available at `http://localhost:5173` (or whichever port Vite assigns).
+
+### Build for production
+
+```bash
+npm run build
+npm run preview   # preview the production build locally
+```
+
+## Project Structure
 
 ```
+src/
+├── components/      # Reusable UI components (Navbar, WatchCard, CartItem, etc.)
+├── pages/           # Route-level pages (Home, WatchesPage, Login, Signup, Profile, Cart)
+├── lib/             # Firebase config + Firestore data access (watches, auth helpers)
+├── store/           # Redux Toolkit store, slices (auth, cart) and typed hooks
+├── hooks/           # Custom hooks (e.g. useScrollReveal)
+└── types/           # Shared TypeScript types (Watch, etc.)
+```
+
+## Deployment
+
+This project is deployed on **Firebase Hosting** (free Spark plan — more than enough for this app), but can also be deployed on any static host like **Vercel** or **Netlify**. Make sure to set the same environment variables listed above on whichever platform you deploy to.
+
+To redeploy after making changes:
+
+```bash
+npm run build
+firebase deploy --only hosting
+```
+
+## Author
+
+Built by [Kerolos20E](https://github.com/Kerolos20E).
+
+---
+
+This is a personal/educational project — no license applied.
